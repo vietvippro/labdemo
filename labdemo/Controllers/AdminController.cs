@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using labdemo.Data;
+using labdemo.Entity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,50 +8,48 @@ namespace labdemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HocSinhController : ControllerBase
+    public class AdminController : ControllerBase
     {
-        private readonly Context _context;
+        private readonly HọcTapDbcontext _context;
 
-        public StudentsController(Context context)
+        public AdminController(HọcTapDbcontext context)
         {
             _context = context;
         }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAdmins()
         {
-            if (_context.Students == null)
+            if (_context.Admins == null)
             {
                 return NotFound();
             }
-            return await _context.Students.ToListAsync();
+            return await _context.Admins.ToListAsync();
         }
-
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(string id)
+        public async Task<ActionResult<Admin>> GetAdmin(string id)
         {
-            if (_context.Students == null)
+            if (_context.Admins == null)
             {
                 return NotFound();
             }
-            var student = await _context.Students.FindAsync(id);
+            var admin = await _context.Admins.FindAsync(id);
 
-            if (student == null)
+            if (admin == null)
             {
                 return NotFound();
             }
 
-            return student;
+            return admin;
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(string id, Student student)
+        public async Task<IActionResult> PutAdmin(string id, Admin admin)
         {
-            if (id != student.studentId)
+            if (id != admin.teacherId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(student).State = EntityState.Modified;
+            _context.Entry(admin).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +57,7 @@ namespace labdemo.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentExists(id))
+                if (!AdminExists(id))
                 {
                     return NotFound();
                 }
@@ -70,20 +70,20 @@ namespace labdemo.Controllers
             return NoContent();
         }
         [HttpPost]
-        public async Task<ActionResult<Student>> PostStudent(Student student)
+        public async Task<ActionResult<Admin>> PostAdmin(Admin admin)
         {
-            if (_context.Students == null)
+            if (_context.Admins == null)
             {
-                return Problem("Entity set 'Context.Students'  is null.");
+                return Problem("Entity set 'Context.Admins'  is null.");
             }
-            _context.Students.Add(student);
+            _context.Admins.Add(admin);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (StudentExists(student.studentId))
+                if (AdminExists(admin.teacherId))
                 {
                     return Conflict();
                 }
@@ -93,30 +93,30 @@ namespace labdemo.Controllers
                 }
             }
 
-            return CreatedAtAction("GetStudent", new { id = student.studentId }, student);
+            return CreatedAtAction("GetAdmin", new { id = admin.teacherId }, admin);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudent(string id)
+        public async Task<IActionResult> DeleteAdmin(string id)
         {
-            if (_context.Students == null)
+            if (_context.Admins == null)
             {
                 return NotFound();
             }
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
+            var admin = await _context.Admins.FindAsync(id);
+            if (admin == null)
             {
                 return NotFound();
             }
 
-            _context.Students.Remove(student);
+            _context.Admins.Remove(admin);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool StudentExists(string id)
+        private bool AdminExists(string id)
         {
-            return (_context.Students?.Any(e => e.studentId == id)).GetValueOrDefault();
+            return (_context.Admins?.Any(e => e.teacherId == id)).GetValueOrDefault();
         }
     }
 }

@@ -8,50 +8,48 @@ namespace labdemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class ClassController : ControllerBase
     {
         private readonly HọcTapDbcontext _context;
 
-        public UserController(HọcTapDbcontext context)
+        public ClassController(HọcTapDbcontext context)
         {
             _context = context;
         }
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<ActionResult<IEnumerable<Lophoc>>> GetClasses()
         {
-            if (_context.User == null)
+            if (_context.Classes == null)
             {
                 return NotFound();
             }
-            return await _context.User.ToListAsync();
+            return await _context.Classes.ToListAsync();
         }
-
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetStudent(string id)
+        public async Task<ActionResult<Lophoc>> GetClass(string id)
         {
-            if (_context.User == null)
+            if (_context.Classes == null)
             {
                 return NotFound();
             }
-            var User = await _context.User.FindAsync(id);
+            var @class = await _context.Classes.FindAsync(id);
 
-            if (User == null)
+            if (@class == null)
             {
                 return NotFound();
             }
 
-            return User;
+            return @class;
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, User student)
+        public async Task<IActionResult> PutClass(string id, Lophoc @class)
         {
-            if (id != student.UserID)
+            if (id != @class.classId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(student).State = EntityState.Modified;
+            _context.Entry(@class).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +57,7 @@ namespace labdemo.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
+                if (!ClassExists(id))
                 {
                     return NotFound();
                 }
@@ -72,20 +70,20 @@ namespace labdemo.Controllers
             return NoContent();
         }
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User User)
+        public async Task<ActionResult<Lophoc>> PostClass(Lophoc @class)
         {
-            if (_context.User == null)
+            if (_context.Classes == null)
             {
-                return Problem("Entity set 'Context.User'  is null.");
+                return Problem("Entity set 'Context.Classes'  is null.");
             }
-            _context.User.Add(User);
+            _context.Classes.Add(@class);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (UserExists(User.UserID))
+                if (ClassExists(@class.classId))
                 {
                     return Conflict();
                 }
@@ -95,30 +93,30 @@ namespace labdemo.Controllers
                 }
             }
 
-            return CreatedAtAction("GetUser", new { id = User.UserID }, User);
+            return CreatedAtAction("GetClass", new { id = @class.classId }, @class);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteClass(string id)
         {
-            if (_context.User == null)
+            if (_context.Classes == null)
             {
                 return NotFound();
             }
-            var student = await _context.User.FindAsync(id);
-            if (student == null)
+            var @class = await _context.Classes.FindAsync(id);
+            if (@class == null)
             {
                 return NotFound();
             }
 
-            _context.User.Remove(student);
+            _context.Classes.Remove(@class);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UserExists(string id)
+        private bool ClassExists(string id)
         {
-            return (_context.User?.Any(e => e.UserID == id)).GetValueOrDefault();
+            return (_context.Classes?.Any(e => e.classId == id)).GetValueOrDefault();
         }
     }
 }
