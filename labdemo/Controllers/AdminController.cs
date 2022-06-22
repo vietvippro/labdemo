@@ -10,9 +10,9 @@ namespace labdemo.Controllers
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly HọcTapDbcontext _context;
+        private readonly Context _context;
 
-        public AdminController(HọcTapDbcontext context)
+        public AdminController(Context context)
         {
             _context = context;
         }
@@ -113,7 +113,6 @@ namespace labdemo.Controllers
 
             return NoContent();
         }
-
         private bool AdminExists(string id)
         {
             return (_context.Admins?.Any(e => e.teacherId == id)).GetValueOrDefault();

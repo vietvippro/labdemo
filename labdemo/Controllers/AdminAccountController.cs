@@ -8,48 +8,48 @@ namespace labdemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClassController : ControllerBase
+    public class AdminAccountController : ControllerBase
     {
         private readonly Context _context;
 
-        public ClassController(Context context)
+        public AdminAccountController(Context context)
         {
             _context = context;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Class>>> GetClasses()
+        public async Task<ActionResult<IEnumerable<AdminAccount>>> GetAdminAccounts()
         {
-            if (_context.Classes == null)
+            if (_context.AdminAccounts == null)
             {
                 return NotFound();
             }
-            return await _context.Classes.ToListAsync();
+            return await _context.AdminAccounts.ToListAsync();
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Class>> GetClass(string id)
+        public async Task<ActionResult<AdminAccount>> GetAdminAccount(string id)
         {
-            if (_context.Classes == null)
+            if (_context.AdminAccounts == null)
             {
                 return NotFound();
             }
-            var @class = await _context.Classes.FindAsync(id);
+            var adminAccount = await _context.AdminAccounts.FindAsync(id);
 
-            if (@class == null)
+            if (adminAccount == null)
             {
                 return NotFound();
             }
 
-            return @class;
+            return adminAccount;
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutClass(string id, Class @class)
+        public async Task<IActionResult> PutAdminAccount(string id, AdminAccount adminAccount)
         {
-            if (id != @class.classId)
+            if (id != adminAccount.userName)
             {
                 return BadRequest();
             }
 
-            _context.Entry(@class).State = EntityState.Modified;
+            _context.Entry(adminAccount).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +57,7 @@ namespace labdemo.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ClassExists(id))
+                if (!AdminAccountExists(id))
                 {
                     return NotFound();
                 }
@@ -70,20 +70,20 @@ namespace labdemo.Controllers
             return NoContent();
         }
         [HttpPost]
-        public async Task<ActionResult<Class>> PostClass(Class @class)
+        public async Task<ActionResult<AdminAccount>> PostAdminAccount(AdminAccount adminAccount)
         {
-            if (_context.Classes == null)
+            if (_context.AdminAccounts == null)
             {
-                return Problem("Entity set 'Context.Classes'  is null.");
+                return Problem("Entity set 'Context.AdminAccounts'  is null.");
             }
-            _context.Classes.Add(@class);
+            _context.AdminAccounts.Add(adminAccount);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (ClassExists(@class.classId))
+                if (AdminAccountExists(adminAccount.userName))
                 {
                     return Conflict();
                 }
@@ -93,29 +93,29 @@ namespace labdemo.Controllers
                 }
             }
 
-            return CreatedAtAction("GetClass", new { id = @class.classId }, @class);
+            return CreatedAtAction("GetAdminAccount", new { id = adminAccount.userName }, adminAccount);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClass(string id)
+        public async Task<IActionResult> DeleteAdminAccount(string id)
         {
-            if (_context.Classes == null)
+            if (_context.AdminAccounts == null)
             {
                 return NotFound();
             }
-            var @class = await _context.Classes.FindAsync(id);
-            if (@class == null)
+            var adminAccount = await _context.AdminAccounts.FindAsync(id);
+            if (adminAccount == null)
             {
                 return NotFound();
             }
 
-            _context.Classes.Remove(@class);
+            _context.AdminAccounts.Remove(adminAccount);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-        private bool ClassExists(string id)
+        private bool AdminAccountExists(string id)
         {
-            return (_context.Classes?.Any(e => e.classId == id)).GetValueOrDefault();
+            return (_context.AdminAccounts?.Any(e => e.userName == id)).GetValueOrDefault();
         }
     }
 }
